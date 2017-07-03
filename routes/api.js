@@ -51,9 +51,9 @@ router.route('/people/:id')
       }
 
       for(let k in req.body) {
-        // if (req.body.hasOwnProperty(k)) {
+        if (req.body.hasOwnProperty(k)) {
           req.people[k] = req.body[k];
-        // }
+        }
       }
 
 
@@ -64,6 +64,16 @@ router.route('/people/:id')
           res.json(req.people)
         }
       });
+    })
+    .delete((req,res)=> {
+      req.people.remove((err)=> {
+        if(err) {
+          res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(err);
+        } else {
+          res.status(HttpStatus.NO_CONTENT).send(`Removed ${req.body._id}`);
+        }
+
+      })
     });
 
 module.exports = router;
