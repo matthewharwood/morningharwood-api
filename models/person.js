@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-mongoose.set('debug', true);
+
 const MODEL_NAME = 'Person';
 
 const Model = new Schema({

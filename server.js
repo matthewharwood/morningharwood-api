@@ -8,7 +8,7 @@ const path = require('path');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const mainRouter = require('./routes/index');
-const apiRouter = require('./routes/api');
+const apiRouter = require('./routes/api')('/people');
 
 const DB_URL = 'mongodb://localhost:27017/morningharwood';
 const PORT = 8000 || process.env.PORT;
