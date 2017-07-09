@@ -2,23 +2,25 @@
  * Created by matth on 7/1/2017.
  */
 const HttpStatus = require('http-status-codes');
-const Person = require('../models/person');
-const Work = require('../models/work');
+const Models = require('../models');
+
 const express = require('express');
 const router = express.Router();
+const inflection = require( 'inflection' );
 
+module.exports = (config) => {
+  const url = `/${config}`;
+  const modelKey = inflection.capitalize(inflection.singularize(config));
 
-module.exports = (url) => {
-  // let Model = url.find()
   router.route(url)
       .post((req, res) => {
-        let person = new Person(req.body);
-        person.save();
-        res.status(HttpStatus.CREATED).send(person)
+        let item = new Models[modelKey](req.body);
+        item.save();
+        res.status(HttpStatus.CREATED).send(item)
       })
       .get((req, res) => {
         let query = req.query;
-        Person.find(query, (err, people) => {
+        Models[modelKey].find(query, (err, people) => {
 
           if (err) {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(err);
@@ -31,13 +33,13 @@ module.exports = (url) => {
 
 // Middle ware
   router.use(`${url}/:id`, (req, res, next) => {
-    Person.findById(req.params.id, (err, person) => {
+    Models[modelKey].findById(req.params.id, (err, item) => {
 
       if (err) {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(err);
 
-      } else if (person) {
-        req.person = person;
+      } else if (item) {
+        req.item = item;
         next();
       } else {
         res.status(HttpStatus.NOT_FOUND).send('Not found');
@@ -47,7 +49,7 @@ module.exports = (url) => {
 
   router.route(`${url}/:id`)
       .get((req, res) => {
-        res.json(req.person)
+        res.json(req.item)
       })
       .patch((req, res) => {
         if (req.body._id) {
@@ -56,21 +58,21 @@ module.exports = (url) => {
 
         for (let k in req.body) {
           if (req.body.hasOwnProperty(k)) {
-            req.person[k] = req.body[k];
+            req.item[k] = req.body[k];
           }
         }
 
 
-        req.person.save((err) => {
+        req.item.save((err) => {
           if (err) {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(err);
           } else {
-            res.json(req.person)
+            res.json(req.item)
           }
         });
       })
       .delete((req, res) => {
-        req.person.remove((err) => {
+        req.item.remove((err) => {
           if (err) {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(err);
           } else {

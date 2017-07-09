@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const Routes = require('morningharwood-shared');
+const routeToEnum = require( './utils/model-names' );
 
-const MODEL_NAME = 'Person';
+const MODEL_NAME = routeToEnum(Routes.PEOPLE);
 
 const Model = new Schema({
   address: {type: String},

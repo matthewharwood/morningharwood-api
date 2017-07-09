@@ -4,11 +4,13 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const path = require('path');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const mainRouter = require('./routes/index');
-const apiRouter = require('./routes/api')('/people');
+const apiRouter = require('./routes/api');
+const Routes = require('morningharwood-shared');
 
 const DB_URL = 'mongodb://localhost:27017/morningharwood';
 const PORT = 8000 || process.env.PORT;
@@ -16,10 +18,15 @@ const app = express();
 
 
 app.use(morgan('dev'));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use('/', mainRouter);
-app.use('/api', apiRouter);
+
+for(let route in Routes){
+  app.use('/api', apiRouter(Routes[route]));
+}
+
 
 app.set('views', path.join(__dirname, '/client/views'));
 app.set('views engine', 'ejs');
